@@ -1,0 +1,204 @@
+/* React Calendar Custom Styles for FloDiary */
+
+.react-calendar {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  font-family: inherit;
+  line-height: 1.125em;
+  width: 100%;
+  padding: 20px;
+}
+
+.react-calendar__navigation {
+  display: flex;
+  height: 44px;
+  margin-bottom: 16px;
+}
+
+.react-calendar__navigation button {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.react-calendar__navigation button:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.react-calendar__navigation button:disabled {
+  background-color: #f9fafb;
+  color: #d1d5db;
+}
+
+.react-calendar__navigation__label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.react-calendar__month-view__weekdays {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  padding: 8px 4px;
+}
+
+.react-calendar__tile {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  height: 40px;
+  border-radius: 8px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #374151;
+}
+
+.react-calendar__tile:hover {
+  background-color: #f3f4f6;
+}
+
+.react-calendar__tile--active {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  color: white;
+}
+
+.react-calendar__tile--active:hover {
+  background: linear-gradient(135deg, #7c3aed, #db2777);
+}
+
+.react-calendar__tile--now {
+  background-color: #fef3c7;
+  color: #92400e;
+  font-weight: 600;
+}
+
+.react-calendar__tile--now:hover {
+  background-color: #fde68a;
+}
+
+/* Cycle tracking specific styles */
+.period-day {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  color: #dc2626 !important;
+}
+
+.period-day:hover {
+  background-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+.fertile-day {
+  background-color: rgba(34, 197, 94, 0.1) !important;
+  color: #16a34a !important;
+}
+
+.fertile-day:hover {
+  background-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+.ovulation-day {
+  background-color: rgba(251, 191, 36, 0.1) !important;
+  color: #d97706 !important;
+}
+
+.ovulation-day:hover {
+  background-color: rgba(251, 191, 36, 0.2) !important;
+}
+
+.current-day {
+  color: #8b5cf6 !important;
+  border: 1px solid #8b5cf6 !important;
+}
+
+.current-day:hover {
+  background-color: rgba(139, 92, 246, 0.2) !important;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .react-calendar {
+    padding: 24px;
+  }
+
+  .react-calendar__tile {
+    height: 48px;
+    font-size: 16px;
+  }
+
+  .react-calendar__navigation {
+    height: 52px;
+    margin-bottom: 20px;
+  }
+
+  .react-calendar__navigation button {
+    font-size: 18px;
+    padding: 10px 16px;
+  }
+
+  .react-calendar__month-view__weekdays {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+}
+
+/* Large size variant */
+.calendar-large .react-calendar__tile {
+  height: 56px;
+  font-size: 18px;
+}
+
+@media (min-width: 768px) {
+  .calendar-large .react-calendar__tile {
+    height: 64px;
+    font-size: 20px;
+  }
+}
+
+/* Animation for cycle indicators */
+.cycle-indicator {
+  animation: pulse-indicator 2s infinite;
+}
+
+@keyframes pulse-indicator {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+/* Focus styles for accessibility */
+.react-calendar__tile:focus {
+  outline: 1px solid #8b5cf6;
+  outline-offset: 1px;
+}
+
+/* Disabled dates */
+.react-calendar__tile:disabled {
+  background-color: #f9fafb;
+  color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.react-calendar__tile:disabled:hover {
+  background-color: #f9fafb;
+}
