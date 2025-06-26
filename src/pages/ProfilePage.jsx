@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import PageHeader from "../components/PageHeader";
 import ToggleSwitch from "../components/ToggleSwitch";
+import CycleSettings from "../components/CycleSettings";
 
 function ProfilePage() {
   const [formData, setFormData] = useState({
     firstName: "Akua",
     lastName: "Osei",
     email: "akua.osei@email.com",
-    cycleLength: 28,
-    periodLength: 5,
     notifications: {
       periodReminder: true,
       ovulationReminder: true,
@@ -111,52 +110,7 @@ function ProfilePage() {
           </div>
 
           {/* Cycle Settings */}
-          <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">
-              Cycle Settings
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Average Cycle Length
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    name="cycleLength"
-                    value={formData.cycleLength}
-                    onChange={handleInputChange}
-                    min="21"
-                    max="35"
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  />
-                  <span className="absolute right-3 top-3 text-gray-500 text-sm">
-                    days
-                  </span>
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Average Period Length
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    name="periodLength"
-                    value={formData.periodLength}
-                    onChange={handleInputChange}
-                    min="3"
-                    max="7"
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  />
-                  <span className="absolute right-3 top-3 text-gray-500 text-sm">
-                    days
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <CycleSettings />
 
           {/* Notification Settings */}
           <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm">
