@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import "../assets/fonts/Italianno-Regular.ttf";
 
 function NavigationBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -30,9 +31,12 @@ function NavigationBar() {
                   />
                 </svg>
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-purple-800 to-pink-600 bg-clip-text text-transparent group-hover:from-purple-900 group-hover:to-pink-700 transition-all duration-200">
+              <p
+                style={{ fontFamily: "Italianno" }}
+                className="text-4xl font-bold bg-gradient-to-r from-purple-800 to-pink-600 bg-clip-text text-transparent group-hover:from-purple-900 group-hover:to-pink-700 transition-all duration-200"
+              >
                 FloDiary
-              </span>
+              </p>
             </div>
           </Link>
 

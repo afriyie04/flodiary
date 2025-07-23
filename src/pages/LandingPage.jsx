@@ -38,7 +38,10 @@ function LandingPage() {
 
       <div className="flex flex-col items-center justify-center pt-10 md:pt-0 min-h-[600px] bg-pink-100">
         <p className="text-4xl font-bold text-center mb-8 text-purple-800">
-          Why CycleSync?
+          Why{" "}
+          <span className="text-5xl" style={{ fontFamily: "Italianno" }}>
+            Flodiary?
+          </span>
         </p>
         <p className="text-lg text-center text-gray-700">
           Designed to bring you clarity, comfort and control. Our AI-backed

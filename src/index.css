@@ -1,1 +1,5 @@
 @import "tailwindcss";
+@font-face {
+  font-family: "Italianno";
+  src: local("Italianno-Regular"), url("./assets/fonts/Italianno-Regular.ttf");
+}
