@@ -9,6 +9,8 @@ function SignupPage() {
     lastName: "",
     username: "",
     email: "",
+    password: "", //changes i made
+    
   });
 
   const handleInputChange = (e) => {
@@ -88,7 +90,16 @@ function SignupPage() {
                 placeholder="Enter your email"
                 required
               />
-
+              {/* something new i added */}
+              <FormInput
+                label="Password"
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder="Enter your password"
+                required
+              />
               <button
                 type="submit"
                 className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 px-4 rounded-lg transition-colors transform hover:scale-105"
