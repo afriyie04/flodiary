@@ -1,15 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import PageHeader from "../components/PageHeader";
 import CycleCalendar from "../components/CycleCalendar";
 import CalendarLegend from "../components/CalendarLegend";
+import { AuthContext } from "../context/AuthContext";
+import { calculateCycleData } from "../utils/cycleCalculations";
 
 function CalendarPage() {
+  const { user, loading } = useContext(AuthContext);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const periodDays = [1, 2, 3, 4, 5, 28, 29, 30];
-  const fertileDays = [12, 13, 16, 17];
-  const ovulationDays = [14];
+  if (loading) {
+    return (
+      <DashboardLayout activePage="calendar" title="Calendar">
+        <div>Loading...</div>
+      </DashboardLayout>
+    );
+  }
+
+  if (!user) {
+    return (
+      <DashboardLayout activePage="calendar" title="Calendar">
+        <div>No user data available.</div>
+      </DashboardLayout>
+    );
+  }
+
+  const { periodDays, fertileDays, ovulationDay } = calculateCycleData(user);
 
   return (
     <DashboardLayout activePage="calendar" title="Calendar">
@@ -22,12 +39,14 @@ function CalendarPage() {
         <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm mb-8">
           <div className="mb-8">
             <CycleCalendar
-              periodDays={periodDays}
-              fertileDays={fertileDays}
-              ovulationDays={ovulationDays}
+              periodDays={periodDays.map((d) => d.getDate())}
+              fertileDays={fertileDays.map((d) => d.getDate())}
+              ovulationDays={ovulationDay ? [ovulationDay.getDate()] : []}
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
               size="large"
+              month={selectedDate.getMonth()}
+              year={selectedDate.getFullYear()}
             />
           </div>
 

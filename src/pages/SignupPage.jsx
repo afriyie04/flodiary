@@ -7,8 +7,7 @@ import { Toaster, toast } from "sonner";
 import "../assets/fonts/Italianno-Regular.ttf";
 
 function SignupPage() {
-  const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
-  const { login } = useContext(AuthContext);
+  const { signup } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -32,26 +31,13 @@ function SignupPage() {
     e.preventDefault();
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_URL}/auth/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      console.log(response);
-
-      if (!response.ok) {
-        throw new Error("Signup failed");
-      }
-
-      const data = await response.json();
-      login(data.token);
+      await signup(formData);
       toast.success("Signup successful");
       navigate("/cycle-setup");
     } catch (error) {
-      toast.error(error.message || "An error occurred during signup.");
+      toast.error(
+        error.response?.data?.message || "An error occurred during signup."
+      );
     } finally {
       setIsLoading(false);
     }

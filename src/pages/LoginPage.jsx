@@ -7,7 +7,6 @@ import { Toaster, toast } from "sonner";
 import "../assets/fonts/Italianno-Regular.ttf";
 
 function LoginPage() {
-  const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -29,24 +28,13 @@ function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
-
-      const data = await response.json();
-      login(data.token);
+      await login(formData.username, formData.password);
       toast.success("Login successful");
       navigate("/");
     } catch (error) {
-      toast.error(error.message || "An error occurred during login.");
+      toast.error(
+        error.response?.data?.message || "An error occurred during login."
+      );
     } finally {
       setIsLoading(false);
     }
