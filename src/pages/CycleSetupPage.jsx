@@ -1,157 +1,119 @@
-import React from "react";
-import DashboardLayout from "../components/DashboardLayout";
-import PageHeader from "../components/PageHeader";
-import CycleSettings from "../components/CycleSettings";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { Toaster, toast } from "sonner";
+import FormInput from "../components/FormInput";
 
 function CycleSetupPage() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    lastPeriodStartDate: null,
+    averageCycleLength: "",
+    averagePeriodLength: "",
+  });
+
+  const handleDateChange = (newValue) => {
+    setFormData((prev) => ({
+      ...prev,
+      lastPeriodStartDate: newValue,
+    }));
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (
+      !formData.lastPeriodStartDate ||
+      !formData.averageCycleLength ||
+      !formData.averagePeriodLength
+    ) {
+      toast.error("Please fill out all fields.");
+      return;
+    }
+    console.log("Cycle data submitted:", formData);
+    toast.success("Your cycle data has been saved!");
+    navigate("/");
+  };
+
   return (
-    <DashboardLayout activePage="cycle-setup" title="Cycle Setup">
-      <div className="max-w-4xl mx-auto">
-        <PageHeader
-          title="Cycle Setup"
-          subtitle="Configure your cycle information for accurate predictions and tracking"
-        />
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <Toaster />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 space-y-8">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-purple-800 mb-2">
+              Tell us about your cycle
+            </h1>
+            <p className="text-gray-600">
+              This will help us personalize your predictions.
+            </p>
+          </div>
 
-        <div className="space-y-6">
-          {/* Main Cycle Settings */}
-          <CycleSettings />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="p-4 border rounded-lg">
+              <p className="font-semibold mb-4 text-gray-700">
+                When did your last period start?
+              </p>
+              <DatePicker
+                label="Last Period Start Date"
+                value={formData.lastPeriodStartDate}
+                onChange={handleDateChange}
+                sx={{ width: "100%" }}
+              />
+            </div>
 
-          {/* Additional Information */}
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl md:rounded-2xl p-4 md:p-6 border border-purple-100">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Why This Information Matters
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-purple-200 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <svg
-                    className="w-4 h-4 text-purple-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 1.414L10.586 9.5H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-1">
-                    Accurate Predictions
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Helps predict your next period and fertile window more
-                    precisely
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-pink-200 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <svg
-                    className="w-4 h-4 text-pink-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-1">
-                    Personalized Insights
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Generates insights tailored to your unique cycle patterns
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <svg
-                    className="w-4 h-4 text-blue-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-1">
-                    Better Health Tracking
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Enables comprehensive monitoring of your reproductive health
-                  </p>
-                </div>
+            <div className="p-4 border rounded-lg">
+              <p className="font-semibold mb-4 text-gray-700">
+                Cycle Information
+              </p>
+              <div className="space-y-4">
+                <FormInput
+                  label="Average Cycle Length (in days)"
+                  name="averageCycleLength"
+                  type="number"
+                  value={formData.averageCycleLength}
+                  onChange={handleInputChange}
+                  placeholder="e.g., 28"
+                  required
+                />
+                <FormInput
+                  label="Average Period Duration (in days)"
+                  name="averagePeriodLength"
+                  type="number"
+                  value={formData.averagePeriodLength}
+                  onChange={handleInputChange}
+                  placeholder="e.g., 5"
+                  required
+                />
               </div>
             </div>
-          </div>
 
-          {/* Quick Tips */}
-          <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              📝 Quick Tips
-            </h3>
-
-            <div className="space-y-3">
-              <div className="flex items-start space-x-2">
-                <span className="text-purple-600 font-semibold">•</span>
-                <p className="text-sm text-gray-600">
-                  <strong>Don't know your exact numbers?</strong> Start with
-                  estimates - you can always update them later as you track more
-                  cycles.
-                </p>
-              </div>
-
-              <div className="flex items-start space-x-2">
-                <span className="text-purple-600 font-semibold">•</span>
-                <p className="text-sm text-gray-600">
-                  <strong>Track for 3 months:</strong> The app becomes more
-                  accurate as it learns your patterns over time.
-                </p>
-              </div>
-
-              <div className="flex items-start space-x-2">
-                <span className="text-purple-600 font-semibold">•</span>
-                <p className="text-sm text-gray-600">
-                  <strong>Update regularly:</strong> Your cycle can change due
-                  to stress, lifestyle, or health factors.
-                </p>
-              </div>
-
-              <div className="flex items-start space-x-2">
-                <span className="text-purple-600 font-semibold">•</span>
-                <p className="text-sm text-gray-600">
-                  <strong>Normal range:</strong> Cycle lengths between 21-45
-                  days and periods lasting 2-10 days are typically normal.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors">
-              Save & Continue to Dashboard
+            <button
+              type="submit"
+              className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 px-4 rounded-lg transition-colors transform hover:scale-105"
+            >
+              Get Started
             </button>
-            <button className="flex-1 border-2 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white font-semibold px-6 py-3 rounded-xl transition-colors">
-              Skip for Now
+            <button
+              type="button"
+              className="w-full mt-2 text-gray-600 hover:text-purple-700 font-semibold py-2 px-4 rounded-lg"
+              onClick={() => navigate("/")}
+            >
+              Skip for now
             </button>
-          </div>
+          </form>
         </div>
       </div>
-    </DashboardLayout>
+    </LocalizationProvider>
   );
 }
 

@@ -6,6 +6,13 @@ function SymptomsPage() {
   const [selectedSymptoms, setSelectedSymptoms] = useState({});
   const [mood, setMood] = useState(null);
   const [flow, setFlow] = useState(null);
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+
+  const API_URL = "https://flodiary-api-2.onrender.com";
+
+  const handleDateChange = (e) => {
+    setDate(e.target.value);
+  };
 
   const symptomCategories = {
     Physical: [
@@ -68,11 +75,20 @@ function SymptomsPage() {
         <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm mb-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg md:text-xl font-semibold text-gray-900">
-              Today, June 15
+              <span className="text-gray-500">
+                {new Date(date).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  weekday: "short",
+                })}
+              </span>
             </h2>
-            <button className="text-purple-600 hover:text-purple-800 text-sm font-medium">
-              Change Date
-            </button>
+            <input
+              type="date"
+              value={date}
+              onChange={handleDateChange}
+              className="text-purple-600 hover:text-purple-800"
+            />
           </div>
         </div>
 

@@ -1,18 +1,24 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 import girlLoginSignup from "../assets/girl-login-signup.png";
 import FormInput from "../components/FormInput";
 import { Toaster, toast } from "sonner";
 import "../assets/fonts/Italianno-Regular.ttf";
 
 function SignupPage() {
+  const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     username: "",
     email: "",
-    password: "", //changes i made
+    password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,11 +28,33 @@ function SignupPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle signup logic here
-    console.log("Signup submitted:", formData);
-    toast.success("Signup successful");
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log(response);
+
+      if (!response.ok) {
+        throw new Error("Signup failed");
+      }
+
+      const data = await response.json();
+      login(data.token);
+      toast.success("Signup successful");
+      navigate("/cycle-setup");
+    } catch (error) {
+      toast.error(error.message || "An error occurred during signup.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -100,7 +128,6 @@ function SignupPage() {
                   placeholder="Enter your email"
                   required
                 />
-                {/* something new i added */}
                 <FormInput
                   label="Password"
                   type="password"
@@ -113,8 +140,9 @@ function SignupPage() {
                 <button
                   type="submit"
                   className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 px-4 rounded-lg transition-colors transform hover:scale-105"
+                  disabled={isLoading}
                 >
-                  Create Account
+                  {isLoading ? "Creating Account..." : "Create Account"}
                 </button>
               </form>
 
@@ -132,10 +160,10 @@ function SignupPage() {
 
               <div className="mt-4 text-center">
                 <Link
-                  to="/"
+                  to="/landing"
                   className="text-gray-500 hover:text-purple-700 text-sm"
                 >
-                  ← Back to home
+                  ← Back to landing page
                 </Link>
               </div>
             </div>

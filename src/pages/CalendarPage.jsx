@@ -1,26 +1,15 @@
 import React, { useState } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import PageHeader from "../components/PageHeader";
-import CalendarGrid from "../components/CalendarGrid";
+import CycleCalendar from "../components/CycleCalendar";
 import CalendarLegend from "../components/CalendarLegend";
 
 function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  // Sample data for demonstration
-  const periodDays = [1, 2, 3, 4, 5, 28, 29, 30, 31];
+  const periodDays = [1, 2, 3, 4, 5, 28, 29, 30];
   const fertileDays = [12, 13, 16, 17];
   const ovulationDays = [14];
-  const currentDay = 15;
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    console.log("Selected date:", date);
-  };
-
-  const handleDayClick = (day) => {
-    console.log("Clicked day:", day);
-  };
 
   return (
     <DashboardLayout activePage="calendar" title="Calendar">
@@ -30,30 +19,23 @@ function CalendarPage() {
           subtitle="Track your cycle and important dates"
         />
 
-        {/* Enhanced Calendar */}
-        <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm mb-6">
-          {/* Calendar Grid */}
-          <div className="mb-6">
-            <CalendarGrid
+        <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm mb-8">
+          <div className="mb-8">
+            <CycleCalendar
               periodDays={periodDays}
               fertileDays={fertileDays}
               ovulationDays={ovulationDays}
-              currentDay={currentDay}
               selectedDate={selectedDate}
-              onDateChange={handleDateChange}
-              onDayClick={handleDayClick}
+              setSelectedDate={setSelectedDate}
               size="large"
-              showNavigation={true}
             />
           </div>
 
-          {/* Legend */}
           <div className="pt-6 border-t border-gray-200">
             <CalendarLegend size="large" />
           </div>
         </div>
 
-        {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button className="bg-red-100 hover:bg-red-200 rounded-xl p-4 text-left transition-colors">
             <div className="flex items-center space-x-3">

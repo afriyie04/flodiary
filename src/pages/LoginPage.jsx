@@ -1,15 +1,21 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 import girlLoginSignup from "../assets/girl-login-signup.png";
 import FormInput from "../components/FormInput";
 import { Toaster, toast } from "sonner";
 import "../assets/fonts/Italianno-Regular.ttf";
 
 function LoginPage() {
+  const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -19,11 +25,31 @@ function LoginPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log("Login submitted:", formData);
-    toast.success("Login successful");
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Login failed");
+      }
+
+      const data = await response.json();
+      login(data.token);
+      toast.success("Login successful");
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message || "An error occurred during login.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -81,8 +107,9 @@ function LoginPage() {
                 <button
                   type="submit"
                   className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 px-4 rounded-lg transition-colors transform hover:scale-105"
+                  disabled={isLoading}
                 >
-                  Sign In
+                  {isLoading ? "Signing In..." : "Sign In"}
                 </button>
               </form>
 
@@ -100,10 +127,10 @@ function LoginPage() {
 
               <div className="mt-4 text-center">
                 <Link
-                  to="/"
+                  to="/landing"
                   className="text-gray-500 hover:text-purple-700 text-sm"
                 >
-                  ← Back to home
+                  ← Back to landing page
                 </Link>
               </div>
             </div>
