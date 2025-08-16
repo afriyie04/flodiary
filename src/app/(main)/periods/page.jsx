@@ -19,19 +19,51 @@ import {
   CalendarRange,
   CalendarCheck,
 } from "lucide-react";
-import { format, parseISO, differenceInDays } from "date-fns";
+import { format, parseISO, differenceInDays, isAfter } from "date-fns";
 import PeriodEntryPopover from "@/components/PeriodEntryPopover";
-
-// Remove mock data and generation function
+import apiService from "@/lib/api";
+import { toast, Toaster } from "sonner";
 
 export default function Periods() {
   const [periodHistory, setPeriodHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchPeriods = async () => {
+    try {
+      setLoading(true);
+      const response = await apiService.getCycles();
+      const cycles = response.cycles || [];
+      
+      // Transform cycles to period format and determine status
+      const today = new Date();
+      const periods = cycles.map((cycle) => {
+        const endDate = new Date(cycle.endDate);
+        const status = isAfter(endDate, today) ? "current" : "complete";
+        
+        return {
+          id: cycle._id || cycle.id,
+          startDate: cycle.startDate,
+          endDate: cycle.endDate,
+          periodLength: cycle.periodLength,
+          cycleLength: cycle.cycleLength,
+          status
+        };
+      });
+      
+      // Sort by start date (most recent first)
+      periods.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+      
+      setPeriodHistory(periods);
+    } catch (error) {
+      console.error("Failed to fetch periods:", error);
+      toast.error("Failed to load period history");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // TODO: Replace with actual API call
-    setPeriodHistory([]); // Empty by default
-    setLoading(false);
+    fetchPeriods();
   }, []);
 
   const currentPeriod = periodHistory.find((p) => p.status === "current");
@@ -49,7 +81,8 @@ export default function Periods() {
   };
 
   const handlePeriodSuccess = () => {
-    // TODO: Refresh data after adding new period (API call)
+    // Refresh the periods list after successful addition
+    fetchPeriods();
   };
 
   if (loading) {
@@ -68,9 +101,11 @@ export default function Periods() {
   }
 
   return (
-    <div className="space-y-6 p-6 w-full">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <>
+      <Toaster />
+      <div className="space-y-6 p-6 w-full">
+        {/* Header */}
+        <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Periods</h1>
           <p className="text-gray-600 mt-1">
@@ -231,13 +266,21 @@ export default function Periods() {
                       </Badge>
                     </div>
 
-                    <div className="mt-2">
+                    <div className="mt-2 space-y-1">
                       <p className="text-sm text-gray-600">
-                        Duration:{" "}
+                        Period Duration:{" "}
                         <span className="font-medium">
                           {period.periodLength} days
                         </span>
                       </p>
+                      {period.cycleLength && (
+                        <p className="text-sm text-gray-600">
+                          Cycle Length:{" "}
+                          <span className="font-medium">
+                            {period.cycleLength} days
+                          </span>
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -247,5 +290,6 @@ export default function Periods() {
         )}
       </div>
     </div>
+    </>
   );
 }
