@@ -1,0 +1,28 @@
+{
+  "model_type": "linear_regression",
+  "version": "1.0.0",
+  "features": [
+    "PreviousCycle",
+    "CycleAvg"
+  ],
+  "coefficients": {
+    "PreviousCycle": 0.5,
+    "CycleAvg": 0.5
+  },
+  "intercept": 0,
+  "performance_metrics": {
+    "mae": 2.5,
+    "rmse": 3.2,
+    "r2": 0.75
+  },
+  "bounds": {
+    "min_cycle_length": 15,
+    "max_cycle_length": 60,
+    "typical_min": 21,
+    "typical_max": 35
+  },
+  "requirements": {
+    "min_cycles": 1,
+    "recommended_cycles": 2
+  }
+}
