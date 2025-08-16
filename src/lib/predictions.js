@@ -63,8 +63,17 @@ class LinearRegressionPredictor {
       // Calculate next period start date
       const lastCycle = validCycles[validCycles.length - 1];
       const lastPeriodStart = new Date(lastCycle.startDate);
-      const nextPeriodStart = new Date(lastPeriodStart);
+      let nextPeriodStart = new Date(lastPeriodStart);
       nextPeriodStart.setDate(nextPeriodStart.getDate() + boundedCycleLength);
+      
+      // Ensure the predicted date is in the future
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Reset time to start of day
+      
+      // If predicted date is in the past, calculate from today instead
+      while (nextPeriodStart <= today) {
+        nextPeriodStart.setDate(nextPeriodStart.getDate() + boundedCycleLength);
+      }
       
       // Calculate next period end date
       const nextPeriodEnd = new Date(nextPeriodStart);
