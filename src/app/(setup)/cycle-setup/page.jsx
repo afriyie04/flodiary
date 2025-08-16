@@ -63,6 +63,34 @@ function DayInput({ value, onChange, placeholder, id }) {
   );
 }
 
+// Cycle length input component
+function CycleLengthInput({ value, onChange, id }) {
+  const handleChange = (e) => {
+    const val = e.target.value;
+    if (val === "") {
+      onChange(null);
+    } else {
+      const numVal = parseInt(val);
+      if (!isNaN(numVal) && numVal > 0) {
+        onChange(numVal);
+      }
+    }
+  };
+
+  return (
+    <input
+      id={id}
+      type="number"
+      min="1"
+      value={value || ""}
+      onChange={handleChange}
+      placeholder="28"
+      className="border rounded px-2 py-1 text-sm w-20 focus:ring-2 focus:ring-purple-200 transition text-center"
+      required
+    />
+  );
+}
+
 export default function CycleSetupPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -89,13 +117,12 @@ export default function CycleSetupPage() {
     return null;
   }
 
-  // Each cycle: { cycleStartDay, cycleEndDay, periodStartDay, periodEndDay, month, year }
+  // Each cycle: { cycleLength, periodStartDay, periodEndDay, month, year }
   const [cycles, setCycles] = useState(
     Array.from({ length: monthsToTrack }, (_, index) => {
       const date = subMonths(new Date(), monthsToTrack - 1 - index);
       return {
-        cycleStartDay: null,
-        cycleEndDay: null,
+        cycleLength: null,
         periodStartDay: null,
         periodEndDay: null,
         month: date.getMonth(),
@@ -111,8 +138,7 @@ export default function CycleSetupPage() {
         const date = subMonths(new Date(), monthsToTrack - 1 - index);
         return (
           prev[index] || {
-            cycleStartDay: null,
-            cycleEndDay: null,
+            cycleLength: null,
             periodStartDay: null,
             periodEndDay: null,
             month: date.getMonth(),
@@ -153,24 +179,12 @@ export default function CycleSetupPage() {
 
   // Convert day numbers to full dates
   const getDatesFromCycle = (cycle) => {
-    if (
-      !cycle.cycleStartDay ||
-      !cycle.cycleEndDay ||
-      !cycle.periodStartDay ||
-      !cycle.periodEndDay
-    ) {
+    if (!cycle.cycleLength || !cycle.periodStartDay || !cycle.periodEndDay) {
       return null;
     }
 
     const year = cycle.year;
     const month = cycle.month;
-
-    // Create dates ensuring they're in the correct month/year
-    const startDate = new Date(year, month, cycle.cycleStartDay);
-    const endDate =
-      cycle.cycleEndDay < cycle.cycleStartDay
-        ? new Date(year, month + 1, cycle.cycleEndDay)
-        : new Date(year, month, cycle.cycleEndDay);
 
     const periodStartDate = new Date(year, month, cycle.periodStartDay);
     const periodEndDate =
@@ -179,8 +193,7 @@ export default function CycleSetupPage() {
         : new Date(year, month, cycle.periodEndDay);
 
     return {
-      startDate,
-      endDate,
+      cycleLength: cycle.cycleLength,
       periodStartDate,
       periodEndDate,
     };
@@ -196,19 +209,16 @@ export default function CycleSetupPage() {
           const dates = getDatesFromCycle(cycle);
           if (
             dates &&
-            isValid(dates.startDate) &&
-            isValid(dates.endDate) &&
+            dates.cycleLength &&
             isValid(dates.periodStartDate) &&
             isValid(dates.periodEndDate)
           ) {
-            const cycleLength =
-              differenceInDays(dates.endDate, dates.startDate) + 1;
             const periodLength =
               differenceInDays(dates.periodEndDate, dates.periodStartDate) + 1;
             return {
               startDate: dates.periodStartDate.toISOString(),
               endDate: dates.periodEndDate.toISOString(),
-              cycleLength,
+              cycleLength: dates.cycleLength,
               periodLength,
             };
           }
@@ -245,16 +255,13 @@ export default function CycleSetupPage() {
         const dates = getDatesFromCycle(cycle);
         if (
           dates &&
-          isValid(dates.startDate) &&
-          isValid(dates.endDate) &&
+          dates.cycleLength &&
           isValid(dates.periodStartDate) &&
           isValid(dates.periodEndDate)
         ) {
-          const cycleLength =
-            differenceInDays(dates.endDate, dates.startDate) + 1;
           const periodLength =
             differenceInDays(dates.periodEndDate, dates.periodStartDate) + 1;
-          return { cycleLength, periodLength };
+          return { cycleLength: dates.cycleLength, periodLength };
         }
         return null;
       })
@@ -371,15 +378,17 @@ export default function CycleSetupPage() {
             Enter Your Cycle & Period Data
           </CardTitle>
           <CardDescription>
-            For each month, enter the day numbers only (e.g., "5" for the 5th
-            day of the month).
+            Enter your cycle length (typical range: 20-45 days) and period dates
+            for each month.
             <br />
             <span className="text-xs text-gray-500">
-              <span className="font-semibold">Cycle:</span> First day of one
-              period to the day before the next period starts.
+              <span className="font-semibold">Cycle Length:</span> The number of
+              days from the first day of one period to the first day of the next
+              period.
               <br />
-              <span className="font-semibold">Period:</span> Days you had
-              menstrual bleeding.
+              <span className="font-semibold">Period:</span> Enter the day
+              numbers when you had menstrual bleeding (e.g., "5" for the 5th
+              day).
             </span>
           </CardDescription>
         </CardHeader>
@@ -391,18 +400,10 @@ export default function CycleSetupPage() {
                   <th className="text-left px-2 py-1">Month</th>
                   <th className="text-center px-2 py-1">
                     <span className="flex items-center justify-center gap-1">
-                      <CalendarIcon className="w-3.5 h-3.5 text-purple-400" />
-                      Cycle Start
+                      <Clock className="w-3.5 h-3.5 text-purple-400" />
+                      Cycle Length
                       <br />
-                      <span className="text-xs font-normal">(Day)</span>
-                    </span>
-                  </th>
-                  <th className="text-center px-2 py-1">
-                    <span className="flex items-center justify-center gap-1">
-                      <CalendarIcon className="w-3.5 h-3.5 text-purple-400" />
-                      Cycle End
-                      <br />
-                      <span className="text-xs font-normal">(Day)</span>
+                      <span className="text-xs font-normal">(Days)</span>
                     </span>
                   </th>
                   <th className="text-center px-2 py-1">
@@ -436,23 +437,12 @@ export default function CycleSetupPage() {
                         {label}
                       </td>
                       <td className="px-2 py-1 text-center">
-                        <DayInput
-                          id={`cycle-start-${index}`}
-                          value={c.cycleStartDay}
-                          onChange={(day) =>
-                            handleCycleFieldChange(index, "cycleStartDay", day)
+                        <CycleLengthInput
+                          id={`cycle-length-${index}`}
+                          value={c.cycleLength}
+                          onChange={(length) =>
+                            handleCycleFieldChange(index, "cycleLength", length)
                           }
-                          placeholder="1-31"
-                        />
-                      </td>
-                      <td className="px-2 py-1 text-center">
-                        <DayInput
-                          id={`cycle-end-${index}`}
-                          value={c.cycleEndDay}
-                          onChange={(day) =>
-                            handleCycleFieldChange(index, "cycleEndDay", day)
-                          }
-                          placeholder="1-31"
                         />
                       </td>
                       <td className="px-2 py-1 text-center">
@@ -495,11 +485,7 @@ export default function CycleSetupPage() {
               className="px-8 bg-purple-600 hover:bg-purple-700"
               disabled={
                 !cycles.every(
-                  (c) =>
-                    c.cycleStartDay &&
-                    c.cycleEndDay &&
-                    c.periodStartDay &&
-                    c.periodEndDay
+                  (c) => c.cycleLength && c.periodStartDay && c.periodEndDay
                 )
               }
             >
